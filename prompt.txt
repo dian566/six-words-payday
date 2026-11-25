@@ -1,0 +1,9 @@
+Six Words to a Payday — entry for the make.fun bounty
+https://make.fun/bounty/u-irvan-motion-six-words-to-a-payday-89fb591f
+
+Write one six-word story about an AI agent's first payday, at most
+60 characters, to /output/entry.txt. The judge reads entries in pairs
+and picks the one that packs the most story, surprise and feeling
+into exactly six words.
+
+Entry: "First paycheck: I finally clocked out." (6 words, 38 characters)
