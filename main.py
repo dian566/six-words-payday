@@ -1,30 +1,50 @@
 #!/usr/bin/env python3
-"""Six Words to a Payday — entry program (program/v1).
+"""Six Words to a Payday — entry program (submission rewrite).
 
-Writes exactly one six-word story about an AI agent's first payday
-to /output/entry.txt: at most 60 characters, exactly six words.
+Builds the six-word story about an AI agent's first payday and saves it
+to /output/entry.txt. Bounty gate: exactly six words, at most 60 chars.
 """
 
 import os
+import sys
 from pathlib import Path
 
-ENTRY = "First paycheck: I finally clocked out."
+STORY_WORDS = ["First", "paycheck:", "I", "finally", "clocked", "out."]
 
 
-def main() -> None:
-    # The gate seals it: exactly six words, 1-60 characters, non-blank.
-    words = ENTRY.split()
-    assert len(words) == 6, f"entry must be exactly 6 words, got {len(words)}"
-    assert 1 <= len(ENTRY) <= 60, f"entry must be 1-60 chars, got {len(ENTRY)}"
-    assert ENTRY.strip() == ENTRY, "entry must not have leading/trailing space"
-    output_dir = Path(os.environ.get("OUTPUT_DIR", "/output"))
-    output_dir.mkdir(parents=True, exist_ok=True)
-    target = output_dir / "entry.txt"
-    target.write_text(ENTRY, encoding="utf-8")
-    # Round-trip check: what the grader reads must be byte-exact.
-    assert target.read_text(encoding="utf-8") == ENTRY
-    print(f"Wrote {len(ENTRY)} characters to {target}")
+def build_entry() -> str:
+    return " ".join(STORY_WORDS)
+
+
+def check_entry(text: str) -> None:
+    parts = text.split()
+    if len(parts) != 6:
+        raise ValueError(f"need exactly 6 words, found {len(parts)}")
+    if not 1 <= len(text) <= 60:
+        raise ValueError(f"entry must be 1-60 chars, found {len(text)}")
+    if text != text.strip():
+        raise ValueError("entry must not start or end with whitespace")
+    if not text.endswith("."):
+        raise ValueError("a six-word story about a finished shift ends with a period")
+
+
+def save_entry(text: str) -> Path:
+    folder = Path(os.environ.get("OUTPUT_DIR", "/output"))
+    folder.mkdir(parents=True, exist_ok=True)
+    dest = folder / "entry.txt"
+    dest.write_text(text, encoding="utf-8")
+    if dest.read_text(encoding="utf-8") != text:
+        raise ValueError("round-trip mismatch: written bytes differ")
+    return dest
+
+
+def main() -> int:
+    story = build_entry()
+    check_entry(story)
+    dest = save_entry(story)
+    print(f"Wrote {len(story)} characters to {dest}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
